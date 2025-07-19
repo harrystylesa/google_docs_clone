@@ -9,11 +9,13 @@ import TableCell from '@tiptap/extension-table-cell'
 import TableHeader from '@tiptap/extension-table-header'
 import TableRow from '@tiptap/extension-table-row'
 import Image from '@tiptap/extension-image'
-import UnderLine from "@tiptap/extension-underline";
-import ImageResize from "tiptap-extension-resize-image";
-import { useEditorStore } from '@/store/use-editor-store';
-import FontFamilty from '@tiptap/extension-font-family';
-import TextStyle from '@tiptap/extension-text-style';
+import UnderLine from '@tiptap/extension-underline'
+import ImageResize from 'tiptap-extension-resize-image'
+import { useEditorStore } from '@/store/use-editor-store'
+import FontFamilty from '@tiptap/extension-font-family'
+import TextStyle from '@tiptap/extension-text-style'
+import { Color } from '@tiptap/extension-color'
+import Highlight from '@tiptap/extension-highlight'
 
 
 const Editor = () => {
@@ -64,6 +66,10 @@ const Editor = () => {
             UnderLine,
             FontFamilty,
             TextStyle,
+            Color,
+            Highlight.configure({
+                multicolor: true
+            }),
         ],
         content: `<img src="https://source.unsplash.com/8xznAGy4HcY/800x400" />`,
         // Don't render immediately on the server to avoid SSR issues
