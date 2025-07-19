@@ -12,6 +12,8 @@ import Image from '@tiptap/extension-image'
 import UnderLine from "@tiptap/extension-underline";
 import ImageResize from "tiptap-extension-resize-image";
 import { useEditorStore } from '@/store/use-editor-store';
+import FontFamilty from '@tiptap/extension-font-family';
+import TextStyle from '@tiptap/extension-text-style';
 
 
 const Editor = () => {
@@ -60,6 +62,8 @@ const Editor = () => {
             Image,
             ImageResize,
             UnderLine,
+            FontFamilty,
+            TextStyle,
         ],
         content: `<img src="https://source.unsplash.com/8xznAGy4HcY/800x400" />`,
         // Don't render immediately on the server to avoid SSR issues
