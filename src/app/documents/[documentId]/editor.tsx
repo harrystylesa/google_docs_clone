@@ -16,7 +16,8 @@ import FontFamilty from '@tiptap/extension-font-family'
 import TextStyle from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import Highlight from '@tiptap/extension-highlight'
-import Link from '@tiptap/extension-link';
+import Link from '@tiptap/extension-link'
+import TextAlign from '@tiptap/extension-text-align'
 
 
 const Editor = () => {
@@ -75,6 +76,9 @@ const Editor = () => {
                 openOnClick: false,
                 autolink: true,
                 defaultProtocol: "https"
+            }),
+            TextAlign.configure({
+                types: ["heading", "paragraph"]
             }),
         ],
         content: `<img src="https://source.unsplash.com/8xznAGy4HcY/800x400" />`,
