@@ -19,6 +19,7 @@ import Highlight from '@tiptap/extension-highlight'
 import Link from '@tiptap/extension-link'
 import TextAlign from '@tiptap/extension-text-align'
 import { FontSizeExtension } from '@/extensions/font-size';
+import { LineHeightExtension } from '@/extensions/line-height';
 
 
 const Editor = () => {
@@ -82,6 +83,7 @@ const Editor = () => {
                 types: ["heading", "paragraph"]
             }),
             FontSizeExtension,
+            LineHeightExtension,
         ],
         content: `<img src="https://source.unsplash.com/8xznAGy4HcY/800x400" />`,
         // Don't render immediately on the server to avoid SSR issues
