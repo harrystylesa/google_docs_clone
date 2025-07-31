@@ -1,9 +1,9 @@
 "use client";
 
-// import { toast } from "sonner";
+import { toast } from "sonner";
 import { useState } from "react";
-// import { useMutation } from "convex/react";
-// import { useRouter } from "next/navigation";
+import { useMutation } from "convex/react";
+import { useRouter } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 import {
@@ -15,25 +15,25 @@ import {
 } from "@/components/ui/carousel";
 import { templates } from "@/constants/templates";
 
-// import { api } from "../../../convex/_generated/api";
+import { api } from "../../../convex/_generated/api";
 
 export const TemplatesGallery = () => {
-    // const router = useRouter();
-    // const create = useMutation(api.documents.create);
+    const router = useRouter();
+    const create = useMutation(api.documents.create);
     const [isCreating, setIsCreating] = useState(false);
 
-    // const onTemplateClick = (title: string, initialContent: string) => {
-    //     setIsCreating(true);
-    //     create({ title, initialContent })
-    //         .catch(() => toast.error("Something went wrong"))
-    //         .then((documentId) => {
-    //             toast.success("Document created")
-    //             router.push(`/documents/${documentId}`);
-    //         })
-    //         .finally(() => {
-    //             setIsCreating(false);
-    //         });
-    // };
+    const onTemplateClick = (title: string, initialContent: string) => {
+        setIsCreating(true);
+        create({ title, initialContent })
+            .catch(() => toast.error("Something went wrong"))
+            .then((documentId) => {
+                toast.success("Document created")
+                router.push(`/documents/${documentId}`);
+            })
+            .finally(() => {
+                setIsCreating(false);
+            });
+    };
 
     return (
         <div className="bg-[#F1F3F4]">
@@ -54,7 +54,7 @@ export const TemplatesGallery = () => {
                                 >
                                     <button
                                         disabled={isCreating}
-                                        // onClick={() => onTemplateClick(template.label, template.initialContent)}
+                                        onClick={() => onTemplateClick(template.label, template.initialContent)}
                                         style={{
                                             backgroundImage: `url(${template.imageUrl})`,
                                             backgroundSize: "cover",

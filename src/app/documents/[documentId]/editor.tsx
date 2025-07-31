@@ -87,7 +87,7 @@ const Editor = () => {
             FontSizeExtension,
             LineHeightExtension,
         ],
-        content: `<img src="https://source.unsplash.com/8xznAGy4HcY/800x400" />`,
+        content: ``,
         // Don't render immediately on the server to avoid SSR issues
         immediatelyRender: false,
     })
