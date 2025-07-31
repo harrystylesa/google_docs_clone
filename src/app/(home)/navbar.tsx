@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-// import { UserButton, OrganizationSwitcher } from "@clerk/nextjs";
+import { UserButton, OrganizationSwitcher } from "@clerk/nextjs";
 import { SearchInput } from "./search-input";
 
 export const Navbar = () => {
@@ -20,7 +20,7 @@ export const Navbar = () => {
                     afterSelectOrganizationUrl="/"
                     afterSelectPersonalUrl="/"
                 /> */}
-                {/* <UserButton /> */}
+                <UserButton />
             </div>
         </nav>
     );
