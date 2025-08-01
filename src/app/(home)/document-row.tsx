@@ -5,7 +5,7 @@ import { Building2Icon, CircleUserIcon } from "lucide-react";
 
 import { TableCell, TableRow } from "@/components/ui/table";
 
-// import { DocumentMenu } from "./document-menu";
+import { DocumentMenu } from "./document-menu";
 import { Doc } from "../../../convex/_generated/dataModel";
 
 interface DocumentRowProps {
@@ -37,11 +37,11 @@ export const DocumentRow = ({ document }: DocumentRowProps) => {
                 {format(new Date(document._creationTime), "MMM dd, yyyy")}
             </TableCell>
             <TableCell className="flex justify-end">
-                {/* <DocumentMenu
+                <DocumentMenu
                     documentId={document._id}
                     title={document.title}
                     onNewTab={() => window.open(`/documents/${document._id}`, "_blank")}
-                /> */}
+                />
             </TableCell>
         </TableRow>
     )
