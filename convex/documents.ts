@@ -6,8 +6,52 @@ import { paginationOptsValidator } from "convex/server";
 
 export const get = query({
     args: { paginationOpts: paginationOptsValidator, search: v.optional(v.string()) },
-    handler: async (ctx, args) => {
-        return await ctx.db.query("documents").paginate(args.paginationOpts);
+    handler: async (ctx, { search, paginationOpts }) => {
+        const user = await ctx.auth.getUserIdentity();
+
+        if (!user) {
+            throw new ConvexError("Unauthorized");
+        }
+
+        // const organizationId = (user.organization_id ?? undefined) as
+        //     | string
+        //     | undefined;
+
+        // // Search within organization
+        // if (search && organizationId) {
+        //     return await ctx.db
+        //         .query("documents")
+        //         .withSearchIndex("search_title", (q) =>
+        //             q.search("title", search).eq("organizationId", organizationId)
+        //         )
+        //         .paginate(paginationOpts)
+        // }
+
+        // Personal search
+        if (search) {
+            return await ctx.db
+                .query("documents")
+                .withSearchIndex("search_title", (q) =>
+                    q.search("title", search).eq("ownerId", user.subject)
+                )
+                .paginate(paginationOpts)
+        }
+
+        // // All docs inside organization
+        // if (organizationId) {
+        //     return await ctx.db
+        //         .query("documents")
+        //         .withIndex("by_organization_id", (q) => q.eq("organizationId", organizationId))
+        //         .order("desc")
+        //         .paginate(paginationOpts);
+        // }
+
+        // All personal docs
+        return await ctx.db
+            .query("documents")
+            .withIndex("by_owner_id", (q) => q.eq("ownerId", user.subject))
+            .order("desc")
+            .paginate(paginationOpts);
     },
 });
 
