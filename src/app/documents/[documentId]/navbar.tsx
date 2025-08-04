@@ -5,7 +5,7 @@ import Image from "next/image"
 import { toast } from "sonner";
 import { BsFilePdf } from "react-icons/bs";
 import { useRouter } from "next/navigation";
-// import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
+import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 import {
     BoldIcon,
     FileIcon,
@@ -260,14 +260,14 @@ export const Navbar = (/*{ data }: NavbarProps*/) => {
             </div>
             <div className="flex gap-3 items-center pl-6">
                 {/* <Avatars />
-                <Inbox />
+                <Inbox /> */}
                 <OrganizationSwitcher
                     afterCreateOrganizationUrl="/"
                     afterLeaveOrganizationUrl="/"
                     afterSelectOrganizationUrl="/"
                     afterSelectPersonalUrl="/"
                 />
-                <UserButton /> */}
+                <UserButton />
             </div>
         </nav>
     );

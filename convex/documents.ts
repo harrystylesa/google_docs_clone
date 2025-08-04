@@ -13,19 +13,19 @@ export const get = query({
             throw new ConvexError("Unauthorized");
         }
 
-        // const organizationId = (user.organization_id ?? undefined) as
-        //     | string
-        //     | undefined;
+        const organizationId = (user.organization_id ?? undefined) as
+            | string
+            | undefined;
 
-        // // Search within organization
-        // if (search && organizationId) {
-        //     return await ctx.db
-        //         .query("documents")
-        //         .withSearchIndex("search_title", (q) =>
-        //             q.search("title", search).eq("organizationId", organizationId)
-        //         )
-        //         .paginate(paginationOpts)
-        // }
+        // Search within organization
+        if (search && organizationId) {
+            return await ctx.db
+                .query("documents")
+                .withSearchIndex("search_title", (q) =>
+                    q.search("title", search).eq("organizationId", organizationId)
+                )
+                .paginate(paginationOpts)
+        }
 
         // Personal search
         if (search) {
@@ -37,14 +37,14 @@ export const get = query({
                 .paginate(paginationOpts)
         }
 
-        // // All docs inside organization
-        // if (organizationId) {
-        //     return await ctx.db
-        //         .query("documents")
-        //         .withIndex("by_organization_id", (q) => q.eq("organizationId", organizationId))
-        //         .order("desc")
-        //         .paginate(paginationOpts);
-        // }
+        // All docs inside organization
+        if (organizationId) {
+            return await ctx.db
+                .query("documents")
+                .withIndex("by_organization_id", (q) => q.eq("organizationId", organizationId))
+                .order("desc")
+                .paginate(paginationOpts);
+        }
 
         // All personal docs
         return await ctx.db
