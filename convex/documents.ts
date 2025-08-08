@@ -63,10 +63,12 @@ export const create = mutation({
         if (!user) {
             throw new ConvexError("Unathorized");
         }
-
+        console.debug({ 'userauth': user })
+        console.debug({ 'orgid': user.organization_id });
         const organizationId = (user.organization_id ?? undefined) as
             | string
             | undefined;
+        console.log("create doc");
 
         return await ctx.db.insert("documents", {
             title: args.title ?? "Untitled coument",
@@ -138,5 +140,18 @@ export const updateById = mutation({
         }
 
         return await ctx.db.patch(args.id, { title: args.title });
+    },
+});
+
+export const getById = query({
+    args: { id: v.id("documents") },
+    handler: async (ctx, { id }) => {
+        const document = await ctx.db.get(id);
+
+        if (!document) {
+            throw new ConvexError("Document not found");
+        }
+
+        return document;
     },
 });
