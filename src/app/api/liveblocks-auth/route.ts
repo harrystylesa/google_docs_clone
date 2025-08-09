@@ -23,6 +23,8 @@ export async function POST(req: Request) {
     }
 
     const { room } = await req.json();
+    // console.debug({ 'room': room });
+    // console.debug({ 'req': req });
     const document = await convex.query(api.documents.getById, { id: room });
 
     if (!document) {

@@ -8,9 +8,9 @@ import { Id } from "../../../../convex/_generated/dataModel";
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
-// export async function getDocuments(ids: Id<"documents">[]) {
-//     return await convex.query(api.documents.getByIds, { ids });
-// };
+export async function getDocuments(ids: Id<"documents">[]) {
+    return await convex.query(api.documents.getByIds, { ids });
+};
 
 export async function getUsers() {
     const { sessionClaims } = await auth();
