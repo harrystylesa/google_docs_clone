@@ -49,10 +49,10 @@ export const RemoveDialog = ({ documentId, children }: RemoveDialogProps) => {
                     </AlertDialogCancel>
                     <AlertDialogAction
                         disabled={isRemoving}
-                        onClick={(e) => {
+                        onClick={async (e) => {
                             e.stopPropagation();
                             setIsRemoving(true);
-                            remove({ id: documentId })
+                            await remove({ id: documentId })
                                 .catch(() => toast.error("Something went wrong"))
                                 .then(() => {
                                     toast.success("Document removed");

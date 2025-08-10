@@ -28,9 +28,13 @@ export async function POST(req: Request) {
     // console.debug({ 'req': req });
     const document = await convex.query(api.documents.getById, { id: room });
 
+    // if (!document) {
+    //     console.debug("no document")
+    //     return new Response("Unauthorized", { status: 401 });
+    // }
+
     if (!document) {
-        console.debug("no document")
-        return new Response("Unauthorized", { status: 401 });
+        return new Response("doc not Found", { status: 404 });
     }
 
     const isOwner = document.ownerId === user.id;

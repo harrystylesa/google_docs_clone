@@ -43,12 +43,12 @@ export function Room({ children }: { children: ReactNode }) {
             throttle={16}
             authEndpoint={async () => {
                 const endpoint = "/api/liveblocks-auth";
-                const room = params.documentId as string;
+                const documentId = params.documentId as string;
                 // const body = room ? { room } : {};
-                console.debug({ room });
+                console.debug({ documentId });
                 const response = await fetch(endpoint, {
                     method: "POST",
-                    body: JSON.stringify({ body }),
+                    body: JSON.stringify({ documentId }),
                 });
 
                 return await response.json();
@@ -69,13 +69,13 @@ export function Room({ children }: { children: ReactNode }) {
 
                 return filteredUsers.map((user) => user.id);
             }}
-            resolveRoomsInfo={async ({ roomIds }) => {
-                const documents = await getDocuments(roomIds as Id<"documents">[]);
-                return documents.map((document) => ({
-                    id: document.id,
-                    name: document.name,
-                }));
-            }}
+            // resolveRoomsInfo={async ({ roomIds }) => {
+            //     const documents = await getDocuments(roomIds as Id<"documents">[]);
+            //     return documents.map((document) => ({
+            //         id: document.id,
+            //         name: document.name,
+            //     }));
+            // }}
         >
             <RoomProvider id={params.documentId as string} initialStorage={{ leftMargin: 56, rightMargin: 56 }}>
                 <ClientSideSuspense fallback={<FullscreenLoader label="Room loading..." />}>
