@@ -159,14 +159,16 @@ export const Navbar = ({ data }: NavbarProps) => {
                                         New Document
                                     </MenubarItem>
                                     <MenubarSeparator />
-                                    <MenubarItem
-                                        onClick={(e) => e.stopPropagation()}
-                                        onSelect={(e) => e.preventDefault()}
-                                    >
-                                        <FilePenIcon className="size-4 mr-2" />
-                                        Rename
-                                    </MenubarItem>
-                                    <RemoveDialog>
+                                    <RenameDialog documentId={data._id} initialTitle={data.title}>
+                                        <MenubarItem
+                                            onClick={(e) => e.stopPropagation()}
+                                            onSelect={(e) => e.preventDefault()}
+                                        >
+                                            <FilePenIcon className="size-4 mr-2" />
+                                            Rename
+                                        </MenubarItem>
+                                    </RenameDialog>
+                                    <RemoveDialog documentId={data._id}>
                                         <MenubarItem
                                             onClick={(e) => e.stopPropagation()}
                                             onSelect={(e) => e.preventDefault()}
