@@ -7,8 +7,6 @@ import { Editor } from "./editor";
 import { Navbar } from "./navbar";
 import Toolbar from "./toolbar";
 import { api } from "../../../../convex/_generated/api";
-import { useState } from "react";
-import { FullscreenLoader } from "@/components/fullscreen-loader";
 
 interface DocumentProps {
     preloadedDocument: Preloaded<typeof api.documents.getById>;

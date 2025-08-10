@@ -552,10 +552,6 @@ interface ToolbarButtonProps {
     icon: LucideIcon;
 }
 
-interface ToolbarButtonState {
-
-}
-
 const ToolbarButton = ({
     onClick,
     isActive,

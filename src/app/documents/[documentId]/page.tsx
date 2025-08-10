@@ -4,8 +4,6 @@ import { preloadQuery } from "convex/nextjs";
 import { Document } from "./document";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
-import { useState } from "react";
-import { FullscreenLoader } from "@/components/fullscreen-loader";
 
 interface DocumentIdPageProps {
   params: Promise<{ documentId: Id<"documents"> }>;
