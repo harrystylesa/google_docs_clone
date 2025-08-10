@@ -14,6 +14,7 @@ import { FullscreenLoader } from "@/components/fullscreen-loader";
 
 import { getUsers, getDocuments } from "./actions";
 import { Id } from "../../../../convex/_generated/dataModel";
+import { LEFT_MARGIN_DEFAULT, RIGHT_MARGIN_DEFAULT } from "@/constants/margins";
 
 type User = { id: string; name: string; avatar: string; color: string; };
 
@@ -69,15 +70,15 @@ export function Room({ children }: { children: ReactNode }) {
 
                 return filteredUsers.map((user) => user.id);
             }}
-            // resolveRoomsInfo={async ({ roomIds }) => {
-            //     const documents = await getDocuments(roomIds as Id<"documents">[]);
-            //     return documents.map((document) => ({
-            //         id: document.id,
-            //         name: document.name,
-            //     }));
-            // }}
+            resolveRoomsInfo={async ({ roomIds }) => {
+                const documents = await getDocuments(roomIds as Id<"documents">[]);
+                return documents.map((document) => ({
+                    id: document.id,
+                    name: document.name,
+                }));
+            }}
         >
-            <RoomProvider id={params.documentId as string} initialStorage={{ leftMargin: 56, rightMargin: 56 }}>
+            <RoomProvider id={params.documentId as string} initialStorage={{ leftMargin: LEFT_MARGIN_DEFAULT, rightMargin: RIGHT_MARGIN_DEFAULT }}>
                 <ClientSideSuspense fallback={<FullscreenLoader label="Room loading..." />}>
                     {children}
                 </ClientSideSuspense>

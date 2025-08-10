@@ -3,7 +3,7 @@
 import { Preloaded, usePreloadedQuery } from "convex/react";
 
 import { Room } from "./room";
-import Editor from "./editor";
+import { Editor } from "./editor";
 import { Navbar } from "./navbar";
 import Toolbar from "./toolbar";
 import { api } from "../../../../convex/_generated/api";

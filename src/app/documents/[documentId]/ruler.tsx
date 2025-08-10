@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
 import { useStorage, useMutation } from "@liveblocks/react";
 
-import { RIGHT_MARGIN_DEFAULT, LEFT_MARGIN_DEFAULT } from "@/constants/margins";
+import { RIGHT_MARGIN_DEFAULT, LEFT_MARGIN_DEFAULT, PAGE_WIDTH_DEFAULT } from "@/constants/margins";
 
 const markers = Array.from({ length: 83 }, (_, i) => i);
 
@@ -30,7 +30,7 @@ export const Ruler = () => {
     };
 
     const handleMouseMove = (e: React.MouseEvent) => {
-        const PAGE_WIDTH = 816;
+        const PAGE_WIDTH = PAGE_WIDTH_DEFAULT;
         const MINIMUM_SPACE = 100;
 
         if ((isDraggingLeft || isDraggingRight) && rulerRef.current) {
@@ -60,11 +60,11 @@ export const Ruler = () => {
     };
 
     const handleLeftDoubleClick = () => {
-        setLeftMargin(56);
+        setLeftMargin(LEFT_MARGIN_DEFAULT);
     };
 
     const handleRightDoubleClick = () => {
-        setRightMargin(56);
+        setRightMargin(RIGHT_MARGIN_DEFAULT);
     };
 
     return (
@@ -95,7 +95,7 @@ export const Ruler = () => {
                 <div className="absolute inset-x-0 bottom-0 h-full">
                     <div className="relative h-full w-[816px]">
                         {markers.map((marker) => {
-                            const position = (marker * 816) / 82;
+                            const position = (marker * PAGE_WIDTH_DEFAULT) / 82;
 
                             return (
                                 <div

@@ -22,11 +22,11 @@ export async function POST(req: Request) {
         return new Response("Unauthorized", { status: 401 });
     }
 
-    const { room } = await req.json();
+    const { documentId } = await req.json();
 
-    console.debug({ 'room': room });
+    console.debug({ 'documentId': documentId });
     // console.debug({ 'req': req });
-    const document = await convex.query(api.documents.getById, { id: room });
+    const document = await convex.query(api.documents.getById, { id: documentId });
 
     // if (!document) {
     //     console.debug("no document")
@@ -60,7 +60,7 @@ export async function POST(req: Request) {
             color,
         },
     });
-    session.allow(room, session.FULL_ACCESS);
+    session.allow(documentId, session.FULL_ACCESS);
     const { body, status } = await session.authorize();
 
     return new Response(body, { status });
