@@ -85,4 +85,4 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 <a href="https://ibb.co/spFYYrRH"><img src="https://i.ibb.co/CpnGGF82/2025-08-13-10-28-17.png" alt="2025-08-13-10-28-17" border="0"></a>
 
 ### Manage Orgnizaiton and Share Documents within the Orgnization 
-<a href="https://ibb.co/4RQ6s7Hr"><img src="https://i.ibb.co/pjmtWxSF/2025-08-13-10-44-51.png" alt="2025-08-13-10-44-51" border="0"></a><br /><a target='_blank' href='https://imgbb.com/'>upload your website for free</a><br />
+<a href="https://ibb.co/4RQ6s7Hr"><img src="https://i.ibb.co/pjmtWxSF/2025-08-13-10-44-51.png" alt="2025-08-13-10-44-51" border="0"></a>
