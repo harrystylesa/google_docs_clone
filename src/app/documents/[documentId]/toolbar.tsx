@@ -43,6 +43,11 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useMutation } from "convex/react";
+import { api } from '../../../../convex/_generated/api';
+import { useStatusMessage } from "@/app/documents/context/status-message-context";
+import { Id } from "../../../../convex/_generated/dataModel"; // Import Id type
+import { SummaryRequestButton } from './summary_button';
 
 
 const LineHeightButton = () => {
@@ -570,7 +575,12 @@ const ToolbarButton = ({
     )
 }
 
-const Toolbar = () => {
+interface ToolbarProps {
+  params: Id<"documents">;
+};
+
+const Toolbar = ({ params }: ToolbarProps) => {
+    const documentId = params;
     const { editor } = useEditorStore();
 
     console.log("Toolbar Editor: ", { editor })
@@ -674,6 +684,8 @@ const Toolbar = () => {
             {sections[2].map((item) => (
                 <ToolbarButton key={item.label} {...item} />
             ))}
+            <Separator orientation="vertical" className="h-6 bg-neutral-300" />
+            <SummaryRequestButton params={documentId} />
         </div>
     );
 }

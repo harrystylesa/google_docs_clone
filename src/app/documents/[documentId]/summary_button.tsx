@@ -1,0 +1,104 @@
+"use client";
+
+import React from "react";
+import { useStatusMessage } from "@/app/documents/context/status-message-context";
+import { useMutation } from "convex/react";
+import { api } from '../../../../convex/_generated/api';
+import { Id } from "../../../../convex/_generated/dataModel"; // Import Id type
+import { useEditorStore } from '@/store/use-editor-store'
+
+interface SummaryButtonProps {
+    params: Id<"documents">;
+}
+
+const SummaryRequestButton = ({ params }: SummaryButtonProps) => {
+    const document_id = params;
+    const { editor } = useEditorStore();
+
+    const { showStatusMessage } = useStatusMessage();
+    const initSummaryById = useMutation(api.summarys.initSummaryById);
+    const updateSummaryById = useMutation(api.summarys.updateSummaryById);
+
+    const handleSubmit = async () => {
+        if (!editor || !document_id) {
+            throw new Error("Editor content or document ID missing.");
+        }
+
+        const editor_content = editor.getText();
+        const client_request_id = crypto.randomUUID(); // Generate unique ID
+
+        showStatusMessage("Generating summary... \n You can close this message now. \n When it's done, I will let you know :)", "loading");
+
+        try {
+            // 1. Create a pending request in Convex
+            await initSummaryById({
+                document_id: document_id, summary_client_request_id: client_request_id,
+            });
+
+            // 2. Send request to FastAPI
+            if (!process.env.NEXT_PUBLIC_SUMMARY_URL) {
+                // console.log({process_env: process.env});
+                throw new Error("SUMMARY_URL is not defined in environment variables.");
+            }
+
+            const response = await fetch(
+                process.env.NEXT_PUBLIC_SUMMARY_URL,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        user_id: "test_user", // Replace with actual user ID if available
+                        client_request_id: client_request_id,
+                        content: editor_content
+                    }),
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            // 3. Update Convex with response
+            if (!data.summary || !data.client_request_id || data.client_request_id !== client_request_id) {
+                await updateSummaryById({
+                    summary_client_request_id: data.client_request_id,
+                    summary_status: "failed",
+                    id: document_id,
+                    summary: `FastAPI responded with: ${data.message || "unknown error"}.`,
+                });
+                showStatusMessage(`Generate summary error, please try again later.`, "error");
+                throw new Error("Invalid response from FastAPI.");
+            }
+
+            await updateSummaryById({
+                summary_client_request_id: data.client_request_id,
+                summary_status: "completed",
+                summary: data.summary,
+                id: document_id
+            });
+            showStatusMessage(
+                "Generate summary successful! \nPlease refresh this page to see the summary.",
+                "success"
+            );
+        } catch (error: any) {
+            console.error("Error generating summary:", error);
+        }
+    };
+
+    return (
+        <div className="p-2 border-b border-gray-200 bg-white flex justify-end">
+            <button
+                onClick={handleSubmit}
+                disabled={!editor || editor.getText().trim() === ""}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+                AI Full Document Summary
+            </button>
+        </div>
+    );
+};
+export { SummaryRequestButton };

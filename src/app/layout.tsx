@@ -4,6 +4,8 @@ import { NuqsAdapter } from "nuqs/adapters/next/app"
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ConvexClientProvider } from "@/components/convex-client-provider";
+import { StatusMessageProvider } from "@/app/documents/context/status-message-context";
+
 
 import "@liveblocks/react-ui/styles.css";
 import "@liveblocks/react-tiptap/styles.css";
@@ -30,7 +32,7 @@ export default function RootLayout({
         <NuqsAdapter>
           <ConvexClientProvider>
             <Toaster />
-            {children}
+            <StatusMessageProvider> {children}</StatusMessageProvider>
           </ConvexClientProvider>
         </NuqsAdapter>
       </body>

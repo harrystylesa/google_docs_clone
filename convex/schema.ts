@@ -16,4 +16,14 @@ export default defineSchema({
             searchField: "title",
             filterFields: ["ownerId", "organizationId"],
         }),
+
+    summarys: defineTable({
+        documentId: v.id("documents"),
+        summary: v.optional(v.string()),
+        summaryClientRequestId: v.string(),
+        summaryRating: v.optional(v.number()),
+        summaryStatus: v.optional(v.string()),
+        summaryUpdatedAt: v.number(),
+    })
+        .index("by_document_id", ["documentId"])
 });
