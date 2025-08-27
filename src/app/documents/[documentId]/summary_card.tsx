@@ -24,12 +24,14 @@ const SummaryCard = ({ documentId }: SummaryCardProps) => {
         // If the modal is closed, reset the message.
         if (!isZoomed) {
             setSubmissionMessage(null);
+            setRating(null);
             // We do NOT reset the rating here. We rely on the logic below to handle it.
         } else {
-            // If the modal is opened and we have data from Convex, set the rating.
-            // This happens on initial load and every time the modal is opened.
+            // When the modal is opened, sync the local rating with the remote data.
             if (summaryItem?.summaryRating !== undefined) {
                 setRating(summaryItem.summaryRating);
+            } else {
+                setRating(null); // Ensure rating is null if no rating exists in Convex
             }
         }
     }, [isZoomed, summaryItem]); //
@@ -114,14 +116,13 @@ const SummaryCard = ({ documentId }: SummaryCardProps) => {
                 className={` bg-white p-4 rounded-lg shadow-lg m-3 border border-gray-200 transition-all duration-300 ease-in-out
                 ${isZoomed ? "fixed flex flex-col items-center justify-center transform max-w-2xl max-h-3/5 z-50 overflow-auto" : "anchored-summarys"}`}
             >
-                {/* Close button that appears only when zoomed */}
                 {isZoomed && (
                     <button
                         onClick={() => setIsZoomed(false)}
-                        className="fixed top-4 right-4 text-gray-400 hover:text-white transition-colors duration-200 z-50"
+                        className="fixed top-2 right-2 z-50 p-1.5 rounded-full bg-red-400 text-white hover:bg-red-500 transition-colors duration-200 shadow-md"
                         aria-label="Close"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
@@ -182,7 +183,7 @@ const SummaryCard = ({ documentId }: SummaryCardProps) => {
                                         </svg>
                                         Submitting...
                                     </div>
-                                ) : rating !== undefined ? "Update Rating" : "Submit Rating"}
+                                ) : summaryRating !== undefined ? "Update Rating" : "Submit Rating"}
                             </button>
                         </div>
                         {submissionMessage && (
