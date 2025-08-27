@@ -123,14 +123,18 @@ export const getSummaryByDocumentId = query({
 
         const summarys = await ctx.db.query("summarys")
             .filter((q) => q.eq(q.field("documentId"), args.documentId))
-            .filter((q) => q.eq(q.field("summaryStatus"), "success"))
+            .filter((q) => q.eq(q.field("summaryStatus"), "completed"))
             .collect();
+
+        console.log("Fetched summarys for documentId:", args.documentId, summarys);
 
         const sortedSummarys = summarys
             .sort((a, b) => b.summaryUpdatedAt - a.summaryUpdatedAt);
 
         if (sortedSummarys.length === 0) {
-            throw new ConvexError("Summary not found");
+            // throw new ConvexError("Summary not found");
+            console.log("No summary found for documentId:", args.documentId);
+            return null;
         }
 
         return sortedSummarys[0].summary;

@@ -9,6 +9,7 @@ import Toolbar from "./toolbar";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import StatusMessage from "@/components/status-message";
+import SummaryCard from "./summary_card";
 
 interface DocumentProps {
     preloadedDocument: Preloaded<typeof api.documents.getById>;
@@ -44,6 +45,10 @@ export const Document = ({ preloadedDocument, documentId }: DocumentProps) => {
                 <div className="pt-[114px] print:pt-0">
                     {document && <Editor initialContent={document.initialContent} />}
                 </div>
+                <div>
+                    <SummaryCard documentId={documentId} />
+                </div>
+
                 <StatusMessage />
             </div>
         </Room>
