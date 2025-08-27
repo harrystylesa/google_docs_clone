@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useQuery } from "convex/react";
+import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 
@@ -11,13 +11,96 @@ interface SummaryCardProps {
 
 const SummaryCard = ({ documentId }: SummaryCardProps) => {
     const [isZoomed, setIsZoomed] = useState(false);
+    const [rating, setRating] = useState<number | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submissionMessage, setSubmissionMessage] = useState<string | null>(null);
 
-    // Fetch the summary from Convex using the documentId
-    const summaryData = useQuery(api.summarys.getSummaryByDocumentId, { documentId });
+    // Fetch the summary and existing feedback from Convex
+    // const summaryData = useQuery(api.summarys.getSummaryByDocumentId, { documentId });
+    const summaryItem = useQuery(api.summarys.getSummaryAndFeedbackByDocumentId, { documentId });
+    const updateFeedback = useMutation(api.summarys.updateFeedbackByClientRequestId);
 
-    if (summaryData === null || summaryData === "") {
+    useEffect(() => {
+        // If the modal is closed, reset the message.
+        if (!isZoomed) {
+            setSubmissionMessage(null);
+            // We do NOT reset the rating here. We rely on the logic below to handle it.
+        } else {
+            // If the modal is opened and we have data from Convex, set the rating.
+            // This happens on initial load and every time the modal is opened.
+            if (summaryItem?.summaryRating !== undefined) {
+                setRating(summaryItem.summaryRating);
+            }
+        }
+    }, [isZoomed, summaryItem]); //
+
+    if (!summaryItem) {
         return null;
     }
+
+    const summarytext = summaryItem.summary
+    const summary_client_request_id = summaryItem.summaryClientRequestId
+    const summaryRating = summaryItem.summaryRating; // Existing rating from Convex, if any
+
+    if (summarytext === null || summarytext === "") {
+        return null;
+    }
+
+    const handleRatingSelect = (star: number) => {
+        if (!isSubmitting) {
+            setRating(star);
+        }
+    };
+
+    // Determine if the button should be disabled
+    const isButtonDisabled = isSubmitting || rating === null || (summaryRating !== undefined && rating === summaryRating);
+
+
+    const handleSubmit = async () => {
+        if (isButtonDisabled) return;
+        // if (!rating || isSubmitting) return;
+
+        setIsSubmitting(true);
+        setSubmissionMessage(null);
+
+        try {
+            const url = process.env.NEXT_PUBLIC_FASTAPI_FEEDBACK_URL;
+            if (!url) {
+                throw new Error("FASTAPI_FEEDBACK_URL is not defined in environment variables.");
+            }
+            const fastApiResponse = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    user_id: "abc123", // Replace with actual user ID if available
+                    client_request_id: summary_client_request_id,
+                    rate: rating,
+                    comment: "" // Optional: Add a comment field if needed
+                }),
+            });
+
+            if (fastApiResponse.ok) {
+                setSubmissionMessage("Rating submitted successfully! ✅");
+            } else {
+                setSubmissionMessage("Failed to submit to FastAPI. Please try again. 😥");
+                throw new Error(`Failed to submit to FastAPI. status: ${fastApiResponse.status}`);
+            }
+
+            await updateFeedback({ id: documentId, summary_client_request_id: summary_client_request_id, summary_rating: rating });
+
+        } catch (error: any) {
+            console.error("Submission error:", error);
+            if (error.message.includes("FastAPI")) {
+                setSubmissionMessage("Failed to submit to FastAPI. Please try again. 😥");
+            } else {
+                setSubmissionMessage("An error occurred during Convex update. Please try again later. 😥");
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <>
@@ -29,7 +112,7 @@ const SummaryCard = ({ documentId }: SummaryCardProps) => {
             {/* Main component */}
             <div
                 className={` bg-white p-4 rounded-lg shadow-lg m-3 border border-gray-200 transition-all duration-300 ease-in-out
-        ${isZoomed ? "fixed flex flex-col items-center justify-center transform max-w-2xl max-h-3/5 z-50 overflow-auto" : "anchored-summarys"}`}
+                ${isZoomed ? "fixed flex flex-col items-center justify-center transform max-w-2xl max-h-3/5 z-50 overflow-auto" : "anchored-summarys"}`}
             >
                 {/* Close button that appears only when zoomed */}
                 {isZoomed && (
@@ -63,10 +146,54 @@ const SummaryCard = ({ documentId }: SummaryCardProps) => {
                     </div>
                 </div>
                 <div className="overflow-y-auto max-h-96">
-                <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line break-words">
-                    {summaryData}
-                </p>
+                    <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line break-words">
+                        {summarytext}
+                    </p>
                 </div>
+                {isZoomed && (
+                    <div className="mt-4 border-t pt-4">
+                        <h3 className="text-md font-semibold text-gray-700 mb-2">How would you rate this summary?</h3>
+                        <div className="flex items-center justify-between">
+                            <div className="flex space-x-1">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <svg
+                                        key={star}
+                                        onClick={() => handleRatingSelect(star)}
+                                        className={`w-6 h-6 cursor-pointer transition-colors duration-200 ${(rating !== null && star <= rating) ? "text-yellow-400" : "text-gray-300"
+                                            }`}
+                                        fill="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" />
+                                    </svg>
+                                ))}
+                            </div>
+                            <button
+                                onClick={handleSubmit}
+                                disabled={isButtonDisabled}
+                                className={`px-4 py-2 text-sm rounded-lg transition-colors duration-200 ${isButtonDisabled ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-blue-500 text-white hover:bg-blue-600"
+                                    }`}
+                            >
+                                {isSubmitting ? (
+                                    <div className="flex items-center">
+                                        <svg className="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Submitting...
+                                    </div>
+                                ) : rating !== undefined ? "Update Rating" : "Submit Rating"}
+                            </button>
+                        </div>
+                        {submissionMessage && (
+                            <div className="mt-2 text-center">
+                                <p className={`text-sm ${submissionMessage.includes("success") ? "text-green-600" : "text-red-600"}`}>
+                                    {submissionMessage}
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         </>
     );
