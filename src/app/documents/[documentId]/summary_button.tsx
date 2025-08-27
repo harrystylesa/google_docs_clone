@@ -90,11 +90,11 @@ const SummaryRequestButton = ({ params }: SummaryButtonProps) => {
     };
 
     return (
-        <div className="p-2 border-b border-gray-200 bg-white flex justify-end">
+        <div className="p-0.5 border-b bg-[#F1F4F9] justify-end min-w-[200px] flex-shrink-0">
             <button
                 onClick={handleSubmit}
                 disabled={!editor || editor.getText().trim() === ""}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-2 py-1 bg-indigo-600 text-sm text-white rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 AI Full Document Summary
             </button>

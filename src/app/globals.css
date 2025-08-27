@@ -274,6 +274,15 @@ body {
   right: 12px;
 }
 
+.anchored-summarys {
+  display: block;
+  max-width: 300px;
+  max-height: 500px;
+  width: 100%;
+  position: absolute;
+  left: 20px;
+}
+
 @media (max-width: 640px) {
   .floating-threads {
     display: block;
