@@ -6,6 +6,7 @@ import { useMutation } from "convex/react";
 import { api } from '../../../../convex/_generated/api';
 import { Id } from "../../../../convex/_generated/dataModel"; // Import Id type
 import { useEditorStore } from '@/store/use-editor-store'
+import { useAuth } from '@clerk/nextjs';
 
 interface SummaryButtonProps {
     params: Id<"documents">;
@@ -19,9 +20,17 @@ const SummaryRequestButton = ({ params }: SummaryButtonProps) => {
     const initSummaryById = useMutation(api.summarys.initSummaryById);
     const updateSummaryById = useMutation(api.summarys.updateSummaryById);
 
+    const { getToken } = useAuth();
+
     const handleSubmit = async () => {
         if (!editor || !document_id) {
             throw new Error("Editor content or document ID missing.");
+        }
+
+        const token = await getToken({ template: 'convex' });
+        console.log({token})
+        if (!token) {
+            throw new Error("user auth token missing");
         }
 
         const editor_content = editor.getText();
@@ -47,9 +56,9 @@ const SummaryRequestButton = ({ params }: SummaryButtonProps) => {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
                     },
                     body: JSON.stringify({
-                        user_id: "test_user", // Replace with actual user ID if available
                         client_request_id: client_request_id,
                         content: editor_content
                     }),

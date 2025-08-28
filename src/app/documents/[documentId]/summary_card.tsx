@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
+import { useAuth } from '@clerk/clerk-react';
 
 interface SummaryCardProps {
     documentId: Id<"documents">;
@@ -19,6 +20,8 @@ const SummaryCard = ({ documentId }: SummaryCardProps) => {
     // const summaryData = useQuery(api.summarys.getSummaryByDocumentId, { documentId });
     const summaryItem = useQuery(api.summarys.getSummaryAndFeedbackByDocumentId, { documentId });
     const updateFeedback = useMutation(api.summarys.updateFeedbackByClientRequestId);
+
+    const { getToken } = useAuth();
 
     useEffect(() => {
         // If the modal is closed, reset the message.
@@ -57,13 +60,17 @@ const SummaryCard = ({ documentId }: SummaryCardProps) => {
     // Determine if the button should be disabled
     const isButtonDisabled = isSubmitting || rating === null || (summaryRating !== undefined && rating === summaryRating);
 
-
     const handleSubmit = async () => {
         if (isButtonDisabled) return;
         // if (!rating || isSubmitting) return;
 
         setIsSubmitting(true);
         setSubmissionMessage(null);
+
+        const token = await getToken({ template: 'convex' });
+        if (!token) {
+            throw new Error("user auth token missing");
+        }
 
         try {
             const url = process.env.NEXT_PUBLIC_FASTAPI_FEEDBACK_URL;
@@ -74,9 +81,10 @@ const SummaryCard = ({ documentId }: SummaryCardProps) => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    // Add the JWT to the Authorization header
+                    "Authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify({
-                    user_id: "abc123", // Replace with actual user ID if available
+                body: JSON.stringify({// Replace with actual user ID if available
                     client_request_id: summary_client_request_id,
                     rate: rating,
                     comment: "" // Optional: Add a comment field if needed
