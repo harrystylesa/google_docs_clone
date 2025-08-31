@@ -51,9 +51,9 @@ const StatusMessage: React.FC = () => {
     return { __html: html };
   };
 
-  const handleRefresh = () => {
-    window.location.reload();
-  };
+  // const handleRefresh = () => {
+  //   window.location.reload();
+  // };
 
 
 

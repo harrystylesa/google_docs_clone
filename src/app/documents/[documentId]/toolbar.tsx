@@ -43,9 +43,6 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useMutation } from "convex/react";
-import { api } from '../../../../convex/_generated/api';
-import { useStatusMessage } from "@/app/documents/context/status-message-context";
 import { Id } from "../../../../convex/_generated/dataModel"; // Import Id type
 import { SummaryRequestButton } from './summary_button';
 

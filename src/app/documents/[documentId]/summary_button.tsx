@@ -28,7 +28,7 @@ const SummaryRequestButton = ({ params }: SummaryButtonProps) => {
         }
 
         const token = await getToken({ template: 'convex' });
-        console.log({token})
+        console.log({ token })
         if (!token) {
             throw new Error("user auth token missing");
         }
@@ -43,9 +43,9 @@ const SummaryRequestButton = ({ params }: SummaryButtonProps) => {
             await initSummaryById({
                 document_id: document_id, summary_client_request_id: client_request_id,
             });
-            
+
             // set url
-            var url: string;
+            let url: string;
             if (!process.env.NEXT_PUBLIC_SUMMARY_URL) {
                 // console.log({process_env: process.env});
                 throw new Error("SUMMARY_URL is not defined in environment variables.");
@@ -55,7 +55,7 @@ const SummaryRequestButton = ({ params }: SummaryButtonProps) => {
 
             if (process.env.NEXT_PUBLIC_SUMMARY_DIRECT_FLAG == "true" && process.env.NEXT_PUBLIC_SUMMARY_DIRECT_URL) {
                 url = process.env.NEXT_PUBLIC_SUMMARY_DIRECT_URL
-                console.log({"flag_direct": process.env.NEXT_PUBLIC_SUMMARY_DIRECT_FLAG});
+                console.log({ "flag_direct": process.env.NEXT_PUBLIC_SUMMARY_DIRECT_FLAG });
             }
 
             // 2. Send request to FastAPI
@@ -102,8 +102,13 @@ const SummaryRequestButton = ({ params }: SummaryButtonProps) => {
                 "Generate summary successful! \nPlease refresh this page to see the summary.",
                 "success"
             );
-        } catch (error: any) {
-            console.error("Error generating summary:", error);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.error("Error generating summary:", error);
+
+            } else {
+                console.error("An error occurred during Convex update. Please try again later. 😥");
+            }
         }
     };
 

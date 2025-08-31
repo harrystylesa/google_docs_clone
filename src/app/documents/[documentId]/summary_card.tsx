@@ -79,7 +79,7 @@ const SummaryCard = ({ documentId }: SummaryCardProps) => {
             try {
                 await updateFeedback({ id: documentId, summary_client_request_id: summary_client_request_id, summary_rating: rating }); setSubmissionMessage("Rating submitted successfully! ✅");
 
-            } catch (error: any) {
+            } catch (error) {
                 console.error("Submission error:", error);
                 setSubmissionMessage("An error occurred during Convex update. Please try again later. 😥");
             } finally {
@@ -114,12 +114,17 @@ const SummaryCard = ({ documentId }: SummaryCardProps) => {
 
                 await updateFeedback({ id: documentId, summary_client_request_id: summary_client_request_id, summary_rating: rating });
 
-            } catch (error: any) {
+            } catch (error: unknown) {
                 console.error("Submission error:", error);
-                if (error.message.includes("FastAPI")) {
-                    setSubmissionMessage("Failed to submit to FastAPI. Please try again. 😥");
+                if (error instanceof Error) {
+                    if (error.message.includes("FastAPI")) {
+                        setSubmissionMessage("Failed to submit to FastAPI. Please try again. 😥");
+                    } else {
+                        setSubmissionMessage("An error occurred during Convex update. Please try again later. 😥");
+                    }
                 } else {
-                    setSubmissionMessage("An error occurred during Convex update. Please try again later. 😥");
+                    // Handle cases where the error is not an Error instance (e.g., a string or object)
+                    setSubmissionMessage("An unexpected error occurred. 😥");
                 }
             } finally {
                 setIsSubmitting(false);
