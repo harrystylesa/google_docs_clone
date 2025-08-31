@@ -71,44 +71,58 @@ const SummaryCard = ({ documentId }: SummaryCardProps) => {
         if (!token) {
             throw new Error("user auth token missing");
         }
+        // console.log({ "flag": process.env.NEXT_PUBLIC_SKIP_FEEDBACK_FLAG });
 
-        try {
-            const url = process.env.NEXT_PUBLIC_FASTAPI_FEEDBACK_URL;
-            if (!url) {
-                throw new Error("FASTAPI_FEEDBACK_URL is not defined in environment variables.");
-            }
-            const fastApiResponse = await fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    // Add the JWT to the Authorization header
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({// Replace with actual user ID if available
-                    client_request_id: summary_client_request_id,
-                    rate: rating,
-                    comment: "" // Optional: Add a comment field if needed
-                }),
-            });
+        if (process.env.NEXT_PUBLIC_SKIP_FEEDBACK_FLAG == "true") {
+            console.log({ "flag_skip": process.env.NEXT_PUBLIC_SKIP_FEEDBACK_FLAG });
+            try {
+                await updateFeedback({ id: documentId, summary_client_request_id: summary_client_request_id, summary_rating: rating }); setSubmissionMessage("Rating submitted successfully! ✅");
 
-            if (fastApiResponse.ok) {
-                setSubmissionMessage("Rating submitted successfully! ✅");
-            } else {
-                setSubmissionMessage("Failed to submit to FastAPI. Please try again. 😥");
-                throw new Error(`Failed to submit to FastAPI. status: ${fastApiResponse.status}`);
-            }
-
-            await updateFeedback({ id: documentId, summary_client_request_id: summary_client_request_id, summary_rating: rating });
-
-        } catch (error: any) {
-            console.error("Submission error:", error);
-            if (error.message.includes("FastAPI")) {
-                setSubmissionMessage("Failed to submit to FastAPI. Please try again. 😥");
-            } else {
+            } catch (error: any) {
+                console.error("Submission error:", error);
                 setSubmissionMessage("An error occurred during Convex update. Please try again later. 😥");
+            } finally {
+                setIsSubmitting(false);
             }
-        } finally {
-            setIsSubmitting(false);
+        } else {
+            try {
+                const url = process.env.NEXT_PUBLIC_FASTAPI_FEEDBACK_URL;
+                if (!url) {
+                    throw new Error("FASTAPI_FEEDBACK_URL is not defined in environment variables.");
+                }
+                const fastApiResponse = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        // Add the JWT to the Authorization header
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({// Replace with actual user ID if available
+                        client_request_id: summary_client_request_id,
+                        rate: rating,
+                        comment: "" // Optional: Add a comment field if needed
+                    }),
+                });
+
+                if (fastApiResponse.ok) {
+                    setSubmissionMessage("Rating submitted successfully! ✅");
+                } else {
+                    setSubmissionMessage("Failed to submit to FastAPI. Please try again. 😥");
+                    throw new Error(`Failed to submit to FastAPI. status: ${fastApiResponse.status}`);
+                }
+
+                await updateFeedback({ id: documentId, summary_client_request_id: summary_client_request_id, summary_rating: rating });
+
+            } catch (error: any) {
+                console.error("Submission error:", error);
+                if (error.message.includes("FastAPI")) {
+                    setSubmissionMessage("Failed to submit to FastAPI. Please try again. 😥");
+                } else {
+                    setSubmissionMessage("An error occurred during Convex update. Please try again later. 😥");
+                }
+            } finally {
+                setIsSubmitting(false);
+            }
         }
     };
 

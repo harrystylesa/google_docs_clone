@@ -43,15 +43,24 @@ const SummaryRequestButton = ({ params }: SummaryButtonProps) => {
             await initSummaryById({
                 document_id: document_id, summary_client_request_id: client_request_id,
             });
-
-            // 2. Send request to FastAPI
+            
+            // set url
+            var url: string;
             if (!process.env.NEXT_PUBLIC_SUMMARY_URL) {
                 // console.log({process_env: process.env});
                 throw new Error("SUMMARY_URL is not defined in environment variables.");
+            } else {
+                url = process.env.NEXT_PUBLIC_SUMMARY_URL;
             }
 
+            if (process.env.NEXT_PUBLIC_SUMMARY_DIRECT_FLAG == "true" && process.env.NEXT_PUBLIC_SUMMARY_DIRECT_URL) {
+                url = process.env.NEXT_PUBLIC_SUMMARY_DIRECT_URL
+                console.log({"flag_direct": process.env.NEXT_PUBLIC_SUMMARY_DIRECT_FLAG});
+            }
+
+            // 2. Send request to FastAPI
             const response = await fetch(
-                process.env.NEXT_PUBLIC_SUMMARY_URL,
+                url,
                 {
                     method: "POST",
                     headers: {
