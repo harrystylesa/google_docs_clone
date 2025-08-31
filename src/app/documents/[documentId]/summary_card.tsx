@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { useAuth } from '@clerk/clerk-react';
+import ReactMarkdown from 'react-markdown';
 
 interface SummaryCardProps {
     documentId: Id<"documents">;
@@ -152,7 +153,7 @@ const SummaryCard = ({ documentId }: SummaryCardProps) => {
 
                 <div className="flex justify-between items-center mb-2">
                     <div className="flex-1"></div>
-                    <h2 className="text-lg font-semibold text-gray-800">Summary</h2>
+                    <h2 className="text-lg font-semibold text-gray-800">AI Summary</h2>
                     {/* Zoom button */}
                     <div className="flex-1 flex justify-end">
                         <button
@@ -169,9 +170,11 @@ const SummaryCard = ({ documentId }: SummaryCardProps) => {
                     </div>
                 </div>
                 <div className="overflow-y-auto max-h-96">
-                    <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line break-words">
-                        {summarytext}
-                    </p>
+                    <div className="text-sm text-gray-600 leading-relaxed whitespace-pre-line break-words">
+                        <ReactMarkdown>
+                            {summarytext}
+                        </ReactMarkdown>
+                    </div>
                 </div>
                 {isZoomed && (
                     <div className="mt-4 border-t pt-4">
