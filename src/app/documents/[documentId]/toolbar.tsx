@@ -43,6 +43,8 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Id } from "../../../../convex/_generated/dataModel"; // Import Id type
+import { SummaryRequestButton } from './summary_button';
 
 
 const LineHeightButton = () => {
@@ -570,7 +572,12 @@ const ToolbarButton = ({
     )
 }
 
-const Toolbar = () => {
+interface ToolbarProps {
+  params: Id<"documents">;
+};
+
+const Toolbar = ({ params }: ToolbarProps) => {
+    const documentId = params;
     const { editor } = useEditorStore();
 
     console.log("Toolbar Editor: ", { editor })
@@ -648,7 +655,7 @@ const Toolbar = () => {
         ];
 
     return (
-        <div className="bg-[#F1F4F9] px-2.5 py-0.5 rounded-[24px] min-h-[40px] flex items-center gap-x-0.5 overflow-x-auto">
+        <div className="px-2.5 py-0.5 rounded-[24px] min-h-[40px] flex items-center gap-x-0.5 overflow-x-auto">
             {sections[0].map((item) => (
                 <ToolbarButton key={item.label} {...item} />
             ))}
@@ -674,6 +681,8 @@ const Toolbar = () => {
             {sections[2].map((item) => (
                 <ToolbarButton key={item.label} {...item} />
             ))}
+            <Separator orientation="vertical" className="h-6 bg-neutral-300" />
+            <SummaryRequestButton params={documentId} />
         </div>
     );
 }

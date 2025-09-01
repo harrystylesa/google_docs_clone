@@ -27,7 +27,7 @@ const DocumentIdPage = async ({ params }: DocumentIdPageProps) => {
 
   console.debug('loading doc');
 
-  return <Document preloadedDocument={preloadedDocument} />;
+  return <Document preloadedDocument={preloadedDocument} documentId={documentId} />;
 }
 
 export default DocumentIdPage;

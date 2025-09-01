@@ -27,12 +27,15 @@ import { LEFT_MARGIN_DEFAULT, RIGHT_MARGIN_DEFAULT } from '@/constants/margins';
 
 import { Ruler } from './ruler';
 import { Threads } from './threads';
+import SummaryCard from './summary_card';
+import { Id } from '../../../../convex/_generated/dataModel';
 
 interface EditorProps {
     initialContent?: string | undefined;
+    documentId: Id<"documents">;
 };
 
-export const Editor = ({ initialContent }: EditorProps) => {
+export const Editor = ({ initialContent, documentId }: EditorProps) => {
     const leftMargin = useStorage((root) => root.leftMargin) ?? LEFT_MARGIN_DEFAULT;
     const rightMargin = useStorage((root) => root.rightMargin) ?? RIGHT_MARGIN_DEFAULT;
 
@@ -115,6 +118,7 @@ export const Editor = ({ initialContent }: EditorProps) => {
             <Ruler />
             <div className="min-w-max flex justify-center w-[816px] py-4 print:py-0 mx-auto print:w-full print:min-w-0">
                 <EditorContent editor={editor} />
+                <SummaryCard documentId={documentId} />
                 <Threads editor={editor} />
             </div>
         </div>
